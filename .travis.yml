@@ -1,0 +1,22 @@
+language: cpp
+sudo: required
+services:
+  - docker
+
+script:
+  - "/bin/true"
+
+before_deploy:
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker build . -t screenly/screenly-webview-build
+  - docker run --rm -t  --name screenly-webview-build -e VERSION=$TRAVIS_TAG -v $TRAVIS_BUILD_DIR:/Screenly-webview  screenly/screenly-webview-build
+
+deploy:
+  provider: releases
+  api_key:
+    secure: YvvDtoaEKwUgPRqFn30jUmmdnNuvwNm9PvadU9A/fo2R79cd2KQJkWtvYNyvOceILwahskg24FZYor4blg0VWWpLOEH4TVGdiJXiLXnZ0TlUzSx4qrgzsKN6qdBinRYPbwYigwWY//Q6RS1fsH8/+1MH+/G5LO53QK/dzEfEHrhCOQkmoBEcq3NRuNn6VgSDWk+zSGOOz2257dMJLLUAO01+SjogeVSUQtKQ3mVO8RrlobuF7z46jWCKYryxFQAPityk8LrU9ssamzLw1matpOetzCddwdC5z0svKzwYW83BZ5NamgnZWntIHwVnbVClsnMtpd0g9Os9iJa9L+8nmlsxbaa4O6CUKdf7Nk4aewdGfBgkLWcOUMr1MHuVbRnKunXXh2jTNsT2cM7apezRVlPj2KAHJgh7BIlEVXbSFWPOdJ2zYsU2qV00WxAPoA6KCiVp/Mm4Qx7rCI7Z4I+washmWmiDA2x/E5kD6/A1h79BCHnnYK+xQP+DTH5uKIM9exnro1L6+7PUBEDhl7pvoIGojU0uFFEMShFpSNAd8gxpRYlEX8j1mEgWNjMfUgZkiTEMRxPR/7L2vFq0j2hu8XZZ5a8Xkxp0PQpFuymTtBTnYaP18RdUiHQJ8wKIxJ9FcZPQh4bCVDfLmvjMH/0lXF/aXnQRO9z3qJvn429jrrA=
+  file: screenly-webview-${TRAVIS_TAG}.tar.gz
+  skip_cleanup: true
+  on:
+    repo: GreatFruitOmsk/ScreenlyOSE-WebView
+    tags: true
